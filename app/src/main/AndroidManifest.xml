@@ -16,16 +16,18 @@
         android:theme="@style/AppTheme">
         <activity android:name=".activity.WelcomeActivity"
             android:screenOrientation="portrait">
+
+        </activity>
+
+        <!--主界面-->
+        <activity android:name=".activity.MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!--主界面-->
-        <activity android:name=".activity.MainActivity"
-            android:screenOrientation="portrait"/>
 
         <!--扫描界面-->
         <activity android:name=".activity.ResarchActivity"
@@ -41,6 +43,7 @@
                 <action android:name="com.seesmile.smilemusic" />
             </intent-filter>
         </service>
+
     </application>
 
 </manifest>

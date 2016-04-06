@@ -18,7 +18,9 @@ import butterknife.ButterKnife;
 import seesmile.musicplayer.MusicPlayListener;
 import seesmile.musicplayer.R;
 import seesmile.musicplayer.base.BaseActivity;
+import seesmile.musicplayer.service.MusicBinder;
 import seesmile.musicplayer.service.MusicPlayService;
+import seesmile.musicplayer.util.Mlog;
 
 /**
  * Describe:
@@ -37,12 +39,13 @@ public class PlayActivity extends BaseActivity implements MusicPlayListener{
     ProgressBar pg_progress;
 
     private File musicFile;
-    private MusicPlayService.MusicBinder musicBinder;
+    private MusicBinder musicBinder;
 
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            musicBinder = (MusicPlayService.MusicBinder) service;
+            musicBinder = (MusicBinder) service;
+            Mlog.i("onServiceConnected");
             musicBinder.setPlayListener(PlayActivity.this);
         }
 
@@ -87,12 +90,14 @@ public class PlayActivity extends BaseActivity implements MusicPlayListener{
 
     @Override
     public void onMusicPlay() {
+        Mlog.i("onMusicPlay");
         iv_play.setImageResource(R.mipmap.icon_pause);
     }
 
     @Override
     public void onMusicProgress(int current, int progress) {
-        pg_progress.setMax(progress);
-        pg_progress.setProgress(current);
+        Mlog.i("onMusicprogress(" + current + ", " + progress + " )");
+        pg_progress.setMax(progress/100);
+        pg_progress.setProgress(current/100);
     }
 }

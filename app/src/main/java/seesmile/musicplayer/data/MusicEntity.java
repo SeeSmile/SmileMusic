@@ -86,4 +86,9 @@ public class MusicEntity implements Parcelable {
             return new MusicEntity[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "path:" + getmFile().getAbsolutePath();
+    }
 }
