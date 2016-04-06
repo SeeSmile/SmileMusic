@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">MusicPlayer</string>
+    <string name="service_music">com.seesmile.smilemusic</string>
+</resources>
