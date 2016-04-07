@@ -1,4 +1,4 @@
-package seesmile.musicplayer;
+package seesmile.musicplayer.interfaces;
 
 /**
  * Describe:

@@ -1,19 +1,9 @@
 package seesmile.musicplayer.service;
 
-import android.annotation.TargetApi;
 import android.app.IntentService;
 import android.content.Intent;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.media.TimedText;
-import android.net.Uri;
-import android.os.Binder;
-import android.os.Build;
 import android.os.IBinder;
-import java.io.File;
-import java.io.IOException;
 
-import seesmile.musicplayer.MusicPlayListener;
 import seesmile.musicplayer.util.Mlog;
 
 /**

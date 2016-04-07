@@ -54,6 +54,7 @@ public class MusicAdapter extends BaseAdapter {
         } else {
             hold = (MusicHold) convertView.getTag();
         }
+        hold.tv_index.setText(position + 1 + "");
         hold.tv_name.setText(mData.get(position).getName());
         return convertView;
     }
@@ -61,5 +62,8 @@ public class MusicAdapter extends BaseAdapter {
     public class MusicHold {
         @Bind(R.id.tv_name)
         TextView tv_name;
+
+        @Bind(R.id.tv_index)
+        TextView tv_index;
     }
 }

@@ -55,11 +55,14 @@ public class MainActivity extends BaseActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             musicBinder = (MusicBinder) service;
+            if(musicBinder.getCurrentMusic() != null) {
+                tv_music.setText(musicBinder.getCurrentMusic().getName());
+            }
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-
+            Mlog.i("MainActivity onServiceDisconnected");
         }
     };
 
@@ -97,6 +100,7 @@ public class MainActivity extends BaseActivity {
         } else {
             musicAdapter.notifyDataSetChanged();
         }
+        getApp().setMusicList(list_music);
     }
 
     @Override
@@ -110,7 +114,6 @@ public class MainActivity extends BaseActivity {
                 }
                 list_music = FileUtils.scanMusicFiles(mFiles);
                 for (MusicEntity e : list_music) {
-                    Mlog.i("e:" + e.toString());
                     db.addMusic(e);
                 }
                 showMusicList(list_music);
@@ -123,9 +126,8 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 try {
-                    File file = list_music.get(position).getmFile();
-                    musicBinder.playMusic(MainActivity.this, file);
-                    Mlog.i("filepath:" + file.getAbsolutePath());
+                    MusicEntity entity = list_music.get(position);
+                    musicBinder.playMusic(MainActivity.this, entity);
                     tv_music.setText(list_music.get(position).getName());
                 } catch (IOException e) {
                     e.printStackTrace();

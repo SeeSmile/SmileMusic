@@ -1,8 +1,22 @@
 package seesmile.musicplayer.util;
 
+import android.content.Context;
+
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
+import cz.msebera.android.httpclient.Header;
+import seesmile.musicplayer.data.Constant;
+import seesmile.musicplayer.data.LrcInfo;
 import seesmile.musicplayer.data.MusicEntity;
 
 /**
@@ -50,4 +64,28 @@ public class FileUtils {
             }
         }
     }
+
+    public static void saveLrcFile(Context context, String url) {
+        new AsyncHttpClient().get(context, url, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                File file = new File(Constant.getLrcDir(), "aa.txt");
+                try {
+                    OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file), "utf-8");
+                    writer.write(new String(responseBody));
+                    writer.close();
+                    LrcInfo info = new LrcInfo(file);
+                    Mlog.i("list:\n" + info.getLrclist().toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+
+            }
+        });
+    }
+
 }

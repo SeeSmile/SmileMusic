@@ -2,9 +2,26 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:orientation="horizontal"
-    android:layout_height="match_parent">
+    android:padding="8dp"
+    android:gravity="center_vertical"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:gravity="center"
+        android:layout_width="30dp"
+        android:layout_height="30dp">
+        <TextView
+            android:text="dd"
+            android:id="@+id/tv_index"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
 
     <TextView
+        android:textColor="@android:color/background_dark"
+        android:textSize="16sp"
+        android:text="爱如潮水"
         android:id="@+id/tv_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

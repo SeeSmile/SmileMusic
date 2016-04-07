@@ -6,10 +6,11 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
 
-import java.io.File;
 import java.io.IOException;
 
-import seesmile.musicplayer.MusicPlayListener;
+import seesmile.musicplayer.interfaces.MusicPlayListener;
+import seesmile.musicplayer.data.MusicEntity;
+import seesmile.musicplayer.util.Mlog;
 
 /**
  * Describe:
@@ -18,13 +19,17 @@ import seesmile.musicplayer.MusicPlayListener;
 public class MusicBinder extends Binder implements Runnable{
 
     private MediaPlayer mediaPlayer;
-    private File mfile;
+    private MusicEntity musicEntity;
     private MusicPlayListener listener;
     private Thread progressThread;
     private static MusicBinder binder;
 
     private MusicBinder() {
 
+    }
+
+    public MusicEntity getCurrentMusic() {
+        return musicEntity;
     }
 
     public static MusicBinder getInstance() {
@@ -34,7 +39,7 @@ public class MusicBinder extends Binder implements Runnable{
         return binder;
     }
 
-    public void setPlayListener(final MusicPlayListener listener) {
+    public void setPlayListener(MusicPlayListener listener) {
         this.listener = listener;
         if(mediaPlayer.isPlaying()) {
             listener.onMusicPlay();
@@ -49,21 +54,16 @@ public class MusicBinder extends Binder implements Runnable{
         }
     }
 
-    /**
-     * 播放指定音乐文件
-     * @param file
-     * @throws IOException
-     */
-    public void playMusic(Context context, File file) throws IOException {
+    public void playMusic(Context context, MusicEntity entity) throws IOException {
         if(mediaPlayer == null) {
             mediaPlayer = new MediaPlayer();
         } else {
             mediaPlayer.stop();
             mediaPlayer.reset();
         }
-        this.mfile = file;
+        this.musicEntity = entity;
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        mediaPlayer.setDataSource(context, Uri.fromFile(file));
+        mediaPlayer.setDataSource(context, Uri.fromFile(musicEntity.getmFile()));
         mediaPlayer.prepareAsync();
         mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
@@ -74,7 +74,18 @@ public class MusicBinder extends Binder implements Runnable{
                 }
             }
         });
-        this.mfile = file;
+
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                if(mediaPlayer != null) {
+                    mediaPlayer.stop();
+                    mediaPlayer.reset();
+                    listener.onMusicProgress(0, 0);
+                }
+                Mlog.i("播放完了，大哥");
+            }
+        });
     }
 
     public void pause() {
