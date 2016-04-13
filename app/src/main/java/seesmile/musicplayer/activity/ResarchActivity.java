@@ -10,6 +10,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -37,32 +41,48 @@ public class ResarchActivity extends BaseActivity {
     @Bind(R.id.btn_finish)
     Button btn_finish;
 
+    private String path_sd;
     private FileAdapter mAdapter;
     private ArrayList<String> list_path;
+    private ArrayList<File> list_file;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_resarch);
         ButterKnife.bind(this);
+        //如果有SD卡
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             File file = Environment.getExternalStorageDirectory();
             if (file.isDirectory()) {
-//                Mlog.i("is dir");
+                path_sd = file.getAbsolutePath();
                 if (file.listFiles() != null) {
                     File[] files = file.listFiles();
-                    mAdapter = new FileAdapter(this, files);
+                    list_file = new ArrayList<>();
+                    for(File f : files) {
+                        list_file.add(f);
+                    }
+                    Collections.sort(list_file, new Comparator<File>() {
+                        @Override
+                        public int compare(File lhs, File rhs) {
+                            if(lhs.isDirectory() && !rhs.isDirectory()) {
+                                return -1;
+                            } else {
+                                if(lhs.isDirectory() && rhs.isDirectory()) {
+                                    return -1;
+                                }
+                                return 0;
+                            }
+                        }
+                    });
+                    mAdapter = new FileAdapter(this, list_file);
                     listView.setAdapter(mAdapter);
                     setPathName(file);
                     initListener();
-                } else {
-//                    Mlog.i("can't read");
                 }
-            } else {
-//                Mlog.i("not dir");
             }
         } else {
-//            Mlog.i("false");
+            toast("检测不到SD卡");
         }
     }
 
@@ -73,10 +93,15 @@ public class ResarchActivity extends BaseActivity {
                 File file = (File) mAdapter.getItem(position);
                 if (file.isDirectory()) {
                     setPathName(file);
-                    mAdapter.setData(file.listFiles());
+                    //选中的目标文件夹有没有文件列表
+                    if(file.listFiles() != null) {
+                        mAdapter.setData(file.listFiles());
+                    } else {
+                        mAdapter.setData(new File[]{});
+                    }
                     mAdapter.notifyDataSetChanged();
                 } else {
-                    finish();
+
                 }
             }
         });
@@ -85,10 +110,15 @@ public class ResarchActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 File file = (File) tv_path.getTag();
-                if (!file.getAbsolutePath().equals(Environment.getExternalStorageDirectory())) {
+                /**
+                 * 判断是否在SD卡根目录
+                 */
+                if (!file.getAbsolutePath().equals(Environment.getExternalStorageDirectory().getAbsolutePath())) {
                     setPathName(file.getParentFile().getAbsoluteFile());
                     mAdapter.setData(file.getParentFile().listFiles());
                     mAdapter.notifyDataSetChanged();
+                } else {
+                    toast("已经是根目录");
                 }
             }
         });
@@ -109,9 +139,13 @@ public class ResarchActivity extends BaseActivity {
         });
     }
 
+    /**
+     * 设置显示当前目录的名字
+     * @param file 当前目录文件
+     */
     private void setPathName(File file) {
-        tv_path.setText(file.getAbsolutePath());
+        tv_path.setText(file.getAbsolutePath().replaceAll(path_sd, "SD卡"));
+        //将当前文件目录的路径保存到tag
         tv_path.setTag(file);
     }
-
 }

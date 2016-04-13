@@ -81,7 +81,9 @@ public class MusicBinder extends Binder implements Runnable{
                 if(mediaPlayer != null) {
                     mediaPlayer.stop();
                     mediaPlayer.reset();
-                    listener.onMusicProgress(0, 0);
+                    if(listener != null) {
+                        listener.onMusicProgress(0, 0);
+                    }
                 }
                 Mlog.i("播放完了，大哥");
             }

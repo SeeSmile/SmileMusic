@@ -20,6 +20,7 @@ public class MusicPlayService extends IntentService {
      */
     public MusicPlayService() {
         super("music player");
+        Mlog.i("Music Service super");
     }
 
     @Override
@@ -30,19 +31,15 @@ public class MusicPlayService extends IntentService {
 
     @Override
     public IBinder onBind(Intent intent) {
-        Mlog.i("onBind()");
         return musicBinder;
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Mlog.i("onHandleIntent()");
     }
 
     @Override
     public void onDestroy() {
-        Mlog.i("onDestroy");
-//        musicBinder.onServiceDestory();
         super.onDestroy();
     }
 }

@@ -83,7 +83,7 @@ public class FileUtils {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
+                Mlog.i("saveLrcFile onFailure: code = " + statusCode);
             }
         });
     }

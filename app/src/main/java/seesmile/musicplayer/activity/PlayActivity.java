@@ -7,7 +7,9 @@ import android.content.ServiceConnection;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -50,6 +52,7 @@ import seesmile.musicplayer.util.WebUtil;
  */
 public class PlayActivity extends BaseActivity implements MusicPlayListener {
 
+    private final int MSG_MUSIC = 1;
 
     @Bind(R.id.iv_play)
     ImageView iv_play;
@@ -64,6 +67,7 @@ public class PlayActivity extends BaseActivity implements MusicPlayListener {
     @Bind(R.id.listView)
     ListView listView;
 
+    private LrcAdapter mAdapter;
     private File musicFile;
     private MusicBinder musicBinder;
 
@@ -144,13 +148,13 @@ public class PlayActivity extends BaseActivity implements MusicPlayListener {
     private void initLrc() {
         File file = new File(Constant.getLrcDir(), "aa.txt");
         LrcInfo info = new LrcInfo(file);
-        LrcAdapter adapter = new LrcAdapter(this, info.getLrclist());
-        listView.setAdapter(adapter);
+        mAdapter = new LrcAdapter(listView, this, info.getLrclist());
+        listView.setAdapter(mAdapter);
 
     }
 
     private void getLrc() {
-        WebUtil.doJsonGet(this, LrcUtil.getLrcUrl("海阔天空"), new JsonLoadListener() {
+        WebUtil.doJsonGet(this, LrcUtil.getLrcUrl("我的歌声里"), new JsonLoadListener() {
             @Override
             public void onSuccess(JSONObject jsonObject) {
                 JSONArray array = jsonObject.optJSONArray("result");
@@ -224,5 +228,21 @@ public class PlayActivity extends BaseActivity implements MusicPlayListener {
     public void onMusicProgress(int current, int progress) {
         pg_progress.setMax(progress / 100);
         pg_progress.setProgress(current / 100);
+        if(mAdapter != null && mAdapter.getCount() > 0) {
+            Message message = Message.obtain();
+            message.arg1 = current;
+            message.what = MSG_MUSIC;
+            handler.sendMessage(message);
+        }
     }
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            if(msg.what == MSG_MUSIC) {
+                mAdapter.setCurrentTime(msg.arg1);
+                mAdapter.notifyDataSetChanged();
+            }
+        }
+    };
 }

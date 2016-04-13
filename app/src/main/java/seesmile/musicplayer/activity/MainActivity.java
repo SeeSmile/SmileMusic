@@ -93,7 +93,12 @@ public class MainActivity extends BaseActivity {
     }
 
     private void showMusicList(ArrayList<MusicEntity> list) {
-        this.list_music = list;
+        if(list_music != null) {
+            list_music.clear();
+        } else {
+            list_music = new ArrayList<>();
+            list_music.addAll(list);
+        }
         if(musicAdapter == null) {
             musicAdapter = new MusicAdapter(this, list_music);
             listView.setAdapter(musicAdapter);

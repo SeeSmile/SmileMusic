@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -25,8 +26,10 @@ public class LrcAdapter extends BaseAdapter {
     private ArrayList<SingleLrc> data;
     private Context context;
     private long musicTime;
+    private ListView listView;
 
-    public LrcAdapter(Context context, ArrayList<SingleLrc> data) {
+    public LrcAdapter(ListView listView, Context context, ArrayList<SingleLrc> data) {
+        this.listView = listView;
         this.data = data;
         this.context = context;
         musicTime = 0;
@@ -65,8 +68,14 @@ public class LrcAdapter extends BaseAdapter {
             }
         }
         if(getMusicPosition() == position) {
-            hold.tv_text.setTextColor(Color.parseColor("#fefefe"));
+            listView.setSelection(position);
+            hold.tv_text.setTextColor(Color.GREEN);
+            hold.tv_text.setTextSize(18);
+        } else {
+            hold.tv_text.setTextColor(Color.BLACK);
+            hold.tv_text.setTextSize(15);
         }
+
         return convertView;
     }
 
@@ -79,10 +88,10 @@ public class LrcAdapter extends BaseAdapter {
         musicTime = time;
     }
 
-    private int getMusicPosition() {
+    public int getMusicPosition() {
         for(int i = 0; i< data.size(); i++) {
             SingleLrc lrc = data.get(i);
-            if(musicTime > lrc.getTime()) {
+            if(musicTime < lrc.getTime()) {
                 return i;
             }
         }
